@@ -1,13 +1,23 @@
+<<<<<<< HEAD
 C51 COMPILER V9.53.0.0   MAIN                                                              04/03/2017 17:07:10 PAGE 1   
+=======
+C51 COMPILER V9.53.0.0   MAIN                                                              03/27/2017 21:31:15 PAGE 1   
+>>>>>>> 761f6cccda0196bb932eb2af51c0029e5c02297c
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN .\src/main.OBJ
 COMPILER INVOKED BY: Z:\Applications\Simplicity Studio.app\Contents\Eclipse\developer\toolchains\keil_8051\9.53\BIN\C51.
                     -exe /Users/camille/SimplicityStudio/v4_workspace/OpCodeOutput/src/main.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNIN
+<<<<<<< HEAD
                     -GLEVEL(2) FLOATFUZZY(3) OPTIMIZE(8,SPEED) DEFINE(DEBUG=1) INTVECTOR(0X0000) INTPROMOTE INCDIR(/Users/camille/SimplicityS
                     -tudio/v4_workspace/OpCodeOutput/inc;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.0.3//Dev
                     -ice/shared/si8051base;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.0.3//Device/EFM8BB3/in
+=======
+                    -GLEVEL(2) FLOATFUZZY(3) OPTIMIZE(8,SPEED) DEFINE(DEBUG=1) INTVECTOR(0X0000) INTPROMOTE INCDIR(/Applications/Simplicity S
+                    -tudio.app/Contents/Eclipse/developer/sdks/8051/v4.0.3//Device/shared/si8051base;/Applications/Simplicity Studio.app/Cont
+                    -ents/Eclipse/developer/sdks/8051/v4.0.3//Device/EFM8BB3/inc;/Users/camille/SimplicityStudio/v4_workspace/OpCodeOutput/in
+>>>>>>> 761f6cccda0196bb932eb2af51c0029e5c02297c
                     -c) PRINT(.\src/main.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src/main.OBJ)
 
 line level    source
@@ -20,6 +30,7 @@ line level    source
    6          #include "InitDevice.h"
    7          #include <string.h>
    8          
+<<<<<<< HEAD
    9          extern void WDT_0_enter_DefaultMode_from_RESET(void) {
   10   1              // $[WDTCN - Watchdog Timer Control]
   11   1              SFRPAGE = 0x00;
@@ -123,13 +134,108 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =      2      14
+=======
+   9          ///////////////////////////////////////////////////////////////////////////////
+  10          // Supporting Functions
+  11          ///////////////////////////////////////////////////////////////////////////////
+  12          const int DELAY = 25000;
+  13          
+  14           void setOpPins(char * operation) {
+  15   1              if (strcmp(operation,"SUM")) {
+  16   2                      P0_B0 = 0;
+  17   2                      P0_B1 = 0;
+  18   2              }
+  19   1              else if (strcmp(operation, "OR")) {
+  20   2                      P0_B0 = 0;
+  21   2                      P0_B1 = 1;
+  22   2              }
+  23   1              else if (strcmp(operation, "AND")) {
+  24   2                      P0_B0 = 1;
+  25   2                      P0_B1 = 0;
+  26   2              }
+  27   1              else if (strcmp(operation,"RESET")) {
+  28   2                      P0_B0 = 1;
+  29   2                      P0_B1 = 1;
+  30   2              }
+  31   1       }
+  32          
+  33           void setDataPins(int i) {
+  34   1              //assume i is a decimal integer less than 32
+  35   1               int r = 0;
+  36   1               int d[4]={0,0,0,0};
+  37   1               int index=0;
+  38   1              //converts decimal to binary
+  39   1              while(i != 0) {
+  40   2                      r = i%2;
+  41   2                      i = i/2;
+  42   2                      d[index] = r;
+  43   2                      index++;
+  44   2              }
+  45   1              //sets data pins
+  46   1              P0_B4 = d[0]; //least significant bit
+  47   1              P0_B5 = d[1];
+  48   1              P0_B6 = d[2];
+  49   1              P0_B7 = d[3];
+  50   1      }
+  51          
+C51 COMPILER V9.53.0.0   MAIN                                                              03/27/2017 21:31:15 PAGE 2   
+
+  52           void ourDelay() {
+  53   1               int x;
+  54   1              for (x = 0; x < DELAY; x++) {}
+  55   1      }
+  56          
+  57           void clockPulse() {
+  58   1              ourDelay();
+  59   1              P1_B0 = 1;
+  60   1              ourDelay();
+  61   1              P1_B0 = 0;
+  62   1              ourDelay();
+  63   1      }
+  64          
+  65          //-----------------------------------------------------------------------------
+  66          // main() Routine
+  67          // ----------------------------------------------------------------------------
+  68          
+  69          int main (void)
+  70          {
+  71   1              enter_DefaultMode_from_RESET();
+  72   1              XBR2 |= 0x40; //Enable Crossbar so we can easily turn pins on and off.
+  73   1      
+  74   1              setDataPins(2);
+  75   1              while (1) {
+  76   2                      if (P0_B2 == 0) {
+  77   3                              setOpPins("RESET");
+  78   3                              clockPulse();
+  79   3                              setOpPins("SUM");
+  80   3                              clockPulse();
+  81   3                              setOpPins("AND");
+  82   3                              clockPulse();
+  83   3                              setOpPins("RESET");
+  84   3                              clockPulse();
+  85   3                      }
+  86   2      
+  87   2              }
+  88   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    313    ----
+   CONSTANT SIZE    =     25    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2      15
+>>>>>>> 761f6cccda0196bb932eb2af51c0029e5c02297c
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
    EDATA SIZE       =   ----    ----
    HDATA SIZE       =   ----    ----
    XDATA CONST SIZE =   ----    ----
+<<<<<<< HEAD
 C51 COMPILER V9.53.0.0   MAIN                                                              04/03/2017 17:07:10 PAGE 3   
 
+=======
+>>>>>>> 761f6cccda0196bb932eb2af51c0029e5c02297c
    FAR CONST SIZE   =   ----    ----
 END OF MODULE INFORMATION.
 
