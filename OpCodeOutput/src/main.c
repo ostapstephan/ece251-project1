@@ -4,56 +4,72 @@
 //-----------------------------------------------------------------------------
 #include <SI_EFM8BB3_Register_Enums.h>                // SFR declarations
 #include "InitDevice.h"
-//initialize pins
+#include <string.h>
+
+extern void WDT_0_enter_DefaultMode_from_RESET(void) {
+	// $[WDTCN - Watchdog Timer Control]
+	SFRPAGE = 0x00;
+	//Disable Watchdog with key sequence
+	WDTCN = 0xDE; //First key
+	WDTCN = 0xAD; //Second key
+	// [WDTCN - Watchdog Timer Control]$
+
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Supporting Functions
 ///////////////////////////////////////////////////////////////////////////////
-static const int DELAY = 25000;
+const int DELAY = 25000;
 
-static void setOpPins(char * operation) {
-	if (operation == "ADD") {
-		P0_B0 = 0;
-		P0_B1 = 0;
-	}
-	else if (operation == "OR") {
-		P0_B0 = 0;
+ void setOpPins(int i) {
+	if (i == 1) { //sum
+		P0_B0 = 1;
 		P0_B1 = 1;
 	}
-	else if (operation == "AND") {
+	else if (i == 2) { //or
 		P0_B0 = 1;
 		P0_B1 = 0;
 	}
-}
+	else if (i == 3) { //and
+		P0_B0 = 0;
+		P0_B1 = 1;
+	}
+	else if (i == 4) { //reset
+		P0_B0 = 0;
+		P0_B1 = 0;
+	}
+ }
 
-static void setDataPins(int i) {
+ void setDataPins(int i) {
 	//assume i is a decimal integer less than 32
-	int remainder;
-	int data[4];
-	int index = 0;
+	 int r = 0;
+	 int d[4]={0,0,0,0};
+	 int index=0;
 	//converts decimal to binary
 	while(i != 0) {
-		remainder = i%2;
+		r = i%2;
 		i = i/2;
-		data(index) = remainder;
+		d[index] = r;
 		index++;
 	}
 	//sets data pins
-	P0_B2 = data[0]; //least significant bit
-	P0_B3 = data[1];
-	P0_B4 = data[2];
-	P0_B5 = data[3];
+	P0_B4 = d[0]; //least significant bit
+	P0_B5 = d[1];
+	P0_B6 = d[2];
+	P0_B7 = d[3];
 }
 
-static void clock() {
-	P0_B6 = 1;
-	delay();
-	P0_B6 = 0;
-	delay();
+ void delay1() {
+	 int x;
+	for (x = 0; x < DELAY; x++) {}
 }
 
-static void delay() {
-	for (int x = 0; x < DELAY; x++) {}
+ void clockPulse() {
+	P1_B0 = 0;
+	delay1();
+	P1_B0 = 1;
+	delay1();
+	P1_B0 = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -62,14 +78,24 @@ static void delay() {
 
 int main (void)
 {
+	WDT_0_enter_DefaultMode_from_RESET();
+	enter_DefaultMode_from_RESET();
 	XBR2 |= 0x40; //Enable Crossbar so we can easily turn pins on and off.
 
-	setDataPins(2);
+	setDataPins(1);
+	setOpPins(4); //Resets LEDs
+	clockPulse();
+	setOpPins(1); //sets operation to SUM
+
 	while (1) {
-		//if button pressed
-
-			//execute list of operations
-
-
+		if (P0_B2 == 0) {
+			int i;
+			for (i = 0; i < 15; i++) {
+				clockPulse();
+			}
+			delay1();
+			delay1();
+			delay1();
+		}
 	}
 }
