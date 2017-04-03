@@ -6,7 +6,6 @@
 #include "InitDevice.h"
 #include <string.h>
 
-<<<<<<< HEAD
 extern void WDT_0_enter_DefaultMode_from_RESET(void) {
 	// $[WDTCN - Watchdog Timer Control]
 	SFRPAGE = 0x00;
@@ -17,14 +16,11 @@ extern void WDT_0_enter_DefaultMode_from_RESET(void) {
 
 }
 
-=======
->>>>>>> 761f6cccda0196bb932eb2af51c0029e5c02297c
 ///////////////////////////////////////////////////////////////////////////////
 // Supporting Functions
 ///////////////////////////////////////////////////////////////////////////////
 const int DELAY = 25000;
 
-<<<<<<< HEAD
  void setOpPins(int i) {
 	if (i == 1) { //sum
 		P0_B0 = 1;
@@ -42,25 +38,6 @@ const int DELAY = 25000;
 		P0_B0 = 0;
 		P0_B1 = 0;
 	}
-=======
- void setOpPins(char * operation) {
-	if (strcmp(operation,"SUM")) {
-		P0_B0 = 0;
-		P0_B1 = 0;
-	}
-	else if (strcmp(operation, "OR")) {
-		P0_B0 = 0;
-		P0_B1 = 1;
-	}
-	else if (strcmp(operation, "AND")) {
-		P0_B0 = 1;
-		P0_B1 = 0;
-	}
-	else if (strcmp(operation,"RESET")) {
-		P0_B0 = 1;
-		P0_B1 = 1;
-	}
->>>>>>> 761f6cccda0196bb932eb2af51c0029e5c02297c
  }
 
  void setDataPins(int i) {
@@ -82,29 +59,17 @@ const int DELAY = 25000;
 	P0_B7 = d[3];
 }
 
-<<<<<<< HEAD
  void delay1() {
-=======
- void ourDelay() {
->>>>>>> 761f6cccda0196bb932eb2af51c0029e5c02297c
 	 int x;
 	for (x = 0; x < DELAY; x++) {}
 }
 
  void clockPulse() {
-<<<<<<< HEAD
 	P1_B0 = 0;
 	delay1();
 	P1_B0 = 1;
 	delay1();
 	P1_B0 = 0;
-=======
-	ourDelay();
-	P1_B0 = 1;
-	ourDelay();
-	P1_B0 = 0;
-	ourDelay();
->>>>>>> 761f6cccda0196bb932eb2af51c0029e5c02297c
 }
 
 //-----------------------------------------------------------------------------
@@ -113,7 +78,6 @@ const int DELAY = 25000;
 
 int main (void)
 {
-<<<<<<< HEAD
 	WDT_0_enter_DefaultMode_from_RESET();
 	enter_DefaultMode_from_RESET();
 	XBR2 |= 0x40; //Enable Crossbar so we can easily turn pins on and off.
@@ -132,22 +96,6 @@ int main (void)
 			delay1();
 			delay1();
 			delay1();
-=======
-	enter_DefaultMode_from_RESET();
-	XBR2 |= 0x40; //Enable Crossbar so we can easily turn pins on and off.
-
-	setDataPins(2);
-	while (1) {
-		if (P0_B2 == 0) {
-			setOpPins("RESET");
-			clockPulse();
-			setOpPins("SUM");
-			clockPulse();
-			setOpPins("AND");
-			clockPulse();
-			setOpPins("RESET");
-			clockPulse();
->>>>>>> 761f6cccda0196bb932eb2af51c0029e5c02297c
 		}
 	}
 }
