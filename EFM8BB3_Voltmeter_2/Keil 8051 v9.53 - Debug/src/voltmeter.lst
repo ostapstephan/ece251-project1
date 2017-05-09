@@ -1,0 +1,120 @@
+C51 COMPILER V9.53.0.0   VOLTMETER                                                         05/08/2017 22:34:05 PAGE 1   
+
+
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE VOLTMETER
+OBJECT MODULE PLACED IN .\src\voltmeter.OBJ
+COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\keil_8051\9.53\BIN\C51.exe C:\Users\ostap\S
+                    -implicityStudio\v4_workspace\EFM8BB3_Voltmeter_2\src\voltmeter.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2
+                    -) FLOATFUZZY(3) OPTIMIZE(8,SPEED) DEFINE(DEBUG=1) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\ostap\SimplicityStudio\v4
+                    -_workspace\EFM8BB3_Voltmeter_2\inc\graphics;C:\Users\ostap\SimplicityStudio\v4_workspace\EFM8BB3_Voltmeter_2\inc;C:\User
+                    -s\ostap\SimplicityStudio\v4_workspace\EFM8BB3_Voltmeter_2\inc\config;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8
+                    -051/v4.0.3//kits/common/bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.0.3//kits/EFM8BB3_SLSTK2022A/confi
+                    -g;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.0.3//Device/EFM8BB3/peripheral_driver/inc;C:/SiliconLabs/Sim
+                    -plicityStudio/v4/developer/sdks/8051/v4.0.3//kits/common/drivers/efm8_joystick;C:/SiliconLabs/SimplicityStudio/v4/develo
+                    -per/sdks/8051/v4.0.3//kits/common/drivers/efm8_memory_lcd/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.
+                    -0.3//kits/common/drivers/efm8_memory_lcd/inc/graphics;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.0.3//kit
+                    -s/common/drivers/efm8_memory_lcd/inc/config;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.0.3//Device/shared
+                    -/si8051base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.0.3//Device/EFM8BB3/inc) PRINT(.\src\voltmeter.lst
+                    -) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\voltmeter.OBJ)
+
+line level    source
+
+   1          
+   2          #include "bsp.h"
+   3          #include "tick.h"
+   4          #include "disp.h"
+   5          #include "render.h"
+   6          #include "voltmeter.h"
+   7          #include "joystick.h"
+   8          #include "adc.h"
+   9          #include "thinfont.h"
+  10          #include "dpad_n.h"
+  11          #include "stdio.h"
+  12          #include "../lib/bsp/efm8_retargetserial/retargetserial.h"
+  13          //#include "retargetserial.h"
+  14          // Generic line buffer
+  15          SI_SEGMENT_VARIABLE(Line[DISP_BUF_SIZE], uint8_t, RENDER_LINE_SEG);
+  16          
+  17          //unsigned char* inputcharacter;
+  18          unsigned char c;
+  19          const int w = 20;
+  20          //const int h = 10;
+  21          int x = 0;
+  22          int y = 0;
+  23          char xdata chars[20] = {0};
+  24          int i,j;
+  25          
+  26          // ADC input: joystick or external
+  27          bool adcInput;
+  28          #define ADCINPUT_JOYSTICK 0
+  29          #define ADCINPUT_EXTERNAL 1
+  30          
+  31          // Flag to update the ADC input text on the screen.
+  32          uint8_t updateAdcInput;
+  33          #define UPDATEADCINPUT_NO  0
+  34          #define UPDATEADCINPUT_YES 1
+  35          
+  36          void drawScreenText(SI_VARIABLE_SEGMENT_POINTER(str, char, RENDER_STR_SEG), uint8_t rowNum, uint8_t fontSc
+             -ale)
+  37          {
+  38   1        uint8_t i, j;
+  39   1      
+  40   1        for (i = 0; i < FONT_HEIGHT; i++)
+  41   1        {
+  42   2          RENDER_ClrLine(Line);
+  43   2          RENDER_Large_StrLine(Line, 4, i, (SI_VARIABLE_SEGMENT_POINTER(, char, RENDER_STR_SEG))str, fontScale);
+C51 COMPILER V9.53.0.0   VOLTMETER                                                         05/08/2017 22:34:05 PAGE 2   
+
+  44   2      
+  45   2          for (j = 1; j < fontScale + 1; j++)
+  46   2          {
+  47   3            DISP_WriteLine(rowNum + (i * fontScale) + j, Line);
+  48   3          }
+  49   2        }
+  50   1      }
+  51          
+  52          void Voltmeter_main(void)
+  53          {
+  54   1        //uint32_t adcVoltage = 0;
+  55   1      
+  56   1                SCON0_TI = 1;
+  57   1      
+  58   1      
+  59   1        // Begin demo
+  60   1        while(1)
+  61   1        {
+  62   2      
+  63   2              drawScreenText("Enter character: ", 12, FONT_SCALE_DEFAULT);
+  64   2              c = getchar();
+  65   2      
+  66   2              chars[x] = c;
+  67   2              x++;
+  68   2              if (x >= w) {
+  69   3                      x = 1;
+  70   3                      i++;
+  71   3                      for (j = 1; j < w; j++) {
+  72   4                              chars[j] = 0;
+  73   4                      }
+  74   3                      chars[0] = c;
+  75   3              }
+  76   2              drawScreenText(chars, 12*(i+2), FONT_SCALE_DEFAULT);
+  77   2        }
+  78   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    249    ----
+   CONSTANT SIZE    =    850    ----
+   XDATA SIZE       =     36    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     12       7
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

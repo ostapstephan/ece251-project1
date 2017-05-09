@@ -1,0 +1,64 @@
+C51 COMPILER V9.53.0.0   MAIN                                                              05/08/2017 22:34:05 PAGE 1   
+
+
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\src\main.OBJ
+COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\keil_8051\9.53\BIN\C51.exe C:\Users\ostap\S
+                    -implicityStudio\v4_workspace\EFM8BB3_Voltmeter_2\src\main.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLO
+                    -ATFUZZY(3) OPTIMIZE(8,SPEED) DEFINE(DEBUG=1) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\ostap\SimplicityStudio\v4_work
+                    -space\EFM8BB3_Voltmeter_2\inc\graphics;C:\Users\ostap\SimplicityStudio\v4_workspace\EFM8BB3_Voltmeter_2\inc;C:\Users\ost
+                    -ap\SimplicityStudio\v4_workspace\EFM8BB3_Voltmeter_2\inc\config;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v
+                    -4.0.3//kits/common/bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.0.3//kits/EFM8BB3_SLSTK2022A/config;C:/
+                    -SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.0.3//Device/EFM8BB3/peripheral_driver/inc;C:/SiliconLabs/Simplici
+                    -tyStudio/v4/developer/sdks/8051/v4.0.3//kits/common/drivers/efm8_joystick;C:/SiliconLabs/SimplicityStudio/v4/developer/s
+                    -dks/8051/v4.0.3//kits/common/drivers/efm8_memory_lcd/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.0.3//
+                    -kits/common/drivers/efm8_memory_lcd/inc/graphics;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.0.3//kits/com
+                    -mon/drivers/efm8_memory_lcd/inc/config;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.0.3//Device/shared/si80
+                    -51base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.0.3//Device/EFM8BB3/inc) PRINT(.\src\main.lst) COND PAG
+                    -EWIDTH(120) PAGELENGTH(65) OBJECT(.\src\main.OBJ)
+
+line level    source
+
+   1          #include "bsp.h"
+   2          #include "InitDevice.h"
+   3          #include "disp.h"
+   4          #include "voltmeter.h"
+   5          #include <SI_EFM8BB3_Register_Enums.h>
+   6          //0.4 = TX
+   7          //0.5 = RX
+   8          
+   9          //---------------------------------------------------------------------------
+  10          // main() Routine
+  11          // --------------------------------------------------------------------------
+  12          int main(void)
+  13          {
+  14   1        // Enter default mode
+  15   1        enter_DefaultMode_from_RESET();
+  16   1      
+  17   1        // Enable all interrupts
+  18   1        IE_EA = 1;
+  19   1        SCON0_TI = 1;
+  20   1        P2_B2 = 0; //EFM8 does not control the UART
+  21   1        DISP_Init();
+  22   1        Voltmeter_main();
+  23   1      
+  24   1        while (1);
+  25   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     17    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
